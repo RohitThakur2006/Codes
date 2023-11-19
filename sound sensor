@@ -1,0 +1,49 @@
+int Sensor = 2;
+int clap = 0;
+int relay=13;
+long clap_start = 0;
+long clap_range = 0;
+boolean status_relay = false;
+ 
+void setup() {
+  Serial.begin(9600);
+pinMode(Sensor, INPUT);
+pinMode(relay,OUTPUT);
+}
+ 
+void loop() {
+int status_sensor = digitalRead(Sensor);
+ 
+if (status_sensor == 0)
+{
+if (clap == 0)
+{
+clap_start = clap_range = millis();
+clap++;
+}
+else if (clap > 0 && millis()-clap_range >= 50)
+{
+clap_range = millis();
+clap++;
+}
+}
+if (millis()-clap_start >= 400)
+{
+if (clap == 2)
+{
+if (!status_relay)
+{
+status_relay = true;
+digitalWrite(relay, HIGH);
+Serial.println("on");
+}
+else if (status_relay)
+{
+status_relay = false;
+digitalWrite(relay, LOW);
+ 
+}
+}
+clap = 0;
+}
+}
